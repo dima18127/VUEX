@@ -4,85 +4,38 @@
 <!-- <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" /> -->
   
 <div id ="app" class="appe">
-  <count-comp></count-comp>
-      <table class="OurTable">
-        <tr>
-          <th v-for="item, index in MainString" :key=index > {{item }}    </th>
-        </tr>
-        <tr  v-for="product, index of LoadMorePages" :key="index">
-          <td > {{generateRandomDate()}} </td>
-          <td> {{product.title}} </td>
-          <td > {{product.stock}} </td>
-          <td >  {{product.price}}</td>
-        </tr>
-        <div ></div>
-        <tr >
-        </tr>
-        <div v-if="Errored" class="alert alert-danger OurTable" role="alert">
-          Ошибка в запросе к серверу API
-        </div>
-      </table>
-          <container  class="pages">
-            <div v-on:click="LoadMorePages" class="page" v-for="page, index in Pages" :key="index">
-              {{page}}
-            </div>
-
-          </container>
-
-          <div v-for="prod, index in info" :key="index" >
-            {{prod}}
-          </div>
-      
+  <Vtable :users_data="AllPosts" />
   </div>
 </template>
 
 
 <script>
-import axios from "axios"
-import  CountComp  from "./components/CountComp.vue";
+// import axios from "axios"
+// import  CountComp  from "./components/CountComp.vue";
+
+import {mapGetters, mapActions} from 'vuex';
+import Vtable from "./components/v-table.vue"
+
 export default {
   name: 'App',
-  data(){
-    return {
-      info: [],
-      isActive: true,
-      MainString: ['Дата ', 'Название ', 'Колличество', 'Расстояние'],
-      Errored: false,
-      CurrentPage: 1,
-    }
-  },
   components: {
-    CountComp
+    Vtable
   },
   methods: {
-    generateRandomDate() { 
-    return Math.floor((Math.random()*10)+1) + ' centember 2022'; 
-    },
-    LoadMorePages(){
-      
-      let from = (this.CurrentPage - 1)*5
-      let to = from + 5
-      this.CurrentPage += 1
-      console.log(typeof(this.info.slice(from, to)));
-      this.info.slice(from, to)
-      console.log(this.info);
-    }
-  },
+    ...mapActions(["GET_STORE_FROM_API"]),
 
-  mounted() {
-    axios
-      .get('https://dummyjson.com/products?_limit=13')
-      .then(response => (this.info = response.data.products))
-      .catch(() => {
-        this.Errored = true
-      });
+
   },
-  // кол-во страниц
   computed: {
+    ...mapGetters(["AllPosts"]),
     Pages(){
-      return Math.ceil(this.info.length/5)
+      return Math.ceil(this.AllPosts.length/5)
     }
-  }
+
+},
+  async mounted() {
+    this.GET_STORE_FROM_API()
+  },
 }
 </script>
 
