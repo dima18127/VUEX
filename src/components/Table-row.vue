@@ -1,4 +1,5 @@
 <template>
+    
         <tr > 
           <td > {{generateRandomDate()}} </td>
           <td> {{row_data.title}} </td>
@@ -7,8 +8,6 @@
         </tr>
     
 </template>
-
-
 <script> export default {
     name: 'Table-row',
     props: { row_data: {
@@ -17,27 +16,23 @@
             return {} 
             }
         },
-        // generateRandomDate(){
-        //     type: Function
-        // },
+
     },
     data(){ return {
         randomDate:  null,
     }
     },
     methods: {
-        // generateRandomDateCHILD() {
-        //     this.generateRandomDate()
-        // },
-        generateRandomDate() { 
-        return Math.floor((Math.random()*10)+1) + ' centember 2022'; 
-        }
+    generateRandomDate() { 
+    return Math.floor((Math.random()*10)+1) + ' centember 2022'; 
+    }
     },
+    computed:{
+
+    }
 
 }
-
 </script>
-
 <style>
 
 </style>

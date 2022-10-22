@@ -15,17 +15,14 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
-    "@babel/eslint-parser": "^7.12.16",
     "@vue/cli-plugin-babel": "~5.0.0",
-    "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
-    "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3"
+    "@vue/cli-service": "~5.0.0"
+
   },
   "eslintConfig": {
-    "root": true,
+    "root": false,
     "env": {
-      "node": true
+      "node": false
     },
     "extends": [
       "plugin:vue/vue3-essential",
@@ -45,5 +42,13 @@
   "description": "## Project setup ``` npm install ```",
   "main": "babel.config.js",
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dima18127/VUEX.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dima18127/VUEX/issues"
+  },
+  "homepage": "https://github.com/dima18127/VUEX#readme"
 }
