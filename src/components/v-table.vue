@@ -65,7 +65,7 @@ export default {
     return {
       Errored: false,
       CurrentPage: 1,
-      ItemsInPage: 6,
+      ItemsInPage: 8,
       TextAreaValue: "",
       SelectedColumn: "",
       SelectedCondition: "",
@@ -105,25 +105,25 @@ export default {
       return this.users_data.slice(from, to)  
     },
     FilterFunc(){  
-    if ( this.SelectedColumn==="Названию") {
-        return this.LoadMorePages.filter(item => item.title.includes(this.TextAreaValue))}
-    else if ( this.SelectedColumn==="Колличеству") {
-        if(this.SelectedCondition === "Больше") {
-           return this.LoadMorePages.filter(item => item.stock > Number(this.TextAreaValue))
-        } else if(this.SelectedCondition === "Меньше"){
+        switch (this.SelectedColumn) {
+        case "Названию": return this.LoadMorePages.filter(item => item.title.includes(this.TextAreaValue))
+        case "Колличеству": if(this.SelectedCondition === "Больше") {
+            return this.LoadMorePages.filter(item => item.stock > Number(this.TextAreaValue))
+            } else if(this.SelectedCondition === "Меньше"){
            return this.LoadMorePages.filter(item =>  item.stock < Number(this.TextAreaValue))
-        } else
-        return this.LoadMorePages.filter(item =>  item.stock.toString().includes(this.TextAreaValue))}
-    else if ( this.SelectedColumn==="Расстоянию") {
-        if(this.SelectedCondition === "Больше") {
-           return this.LoadMorePages.filter(item => item.price > Number(this.TextAreaValue))
-        } else if(this.SelectedCondition === "Меньше"){
-           return this.LoadMorePages.filter(item =>  item.price < Number(this.TextAreaValue))
-        } else
-        return this.LoadMorePages.filter(item => item.price.toString().includes(this.TextAreaValue))
-    }
-    else return this.LoadMorePages
-    }
+            } else
+            return this.LoadMorePages.filter(item =>  item.stock.toString().includes(this.TextAreaValue))
+    // else if ( this.SelectedColumn==="Расстоянию")
+        case "Расстоянию":
+            if(this.SelectedCondition === "Больше") {
+            return this.LoadMorePages.filter(item => item.price > Number(this.TextAreaValue))
+            } else if(this.SelectedCondition === "Меньше"){
+            return this.LoadMorePages.filter(item =>  item.price < Number(this.TextAreaValue))
+            } else
+             return this.LoadMorePages.filter(item => item.price.toString().includes(this.TextAreaValue))
+        default: return this.LoadMorePages
+        }
+}
 }}
 </script>
 <style>
