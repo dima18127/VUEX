@@ -2,30 +2,28 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet">
     <div class="selectMain">
-        Фильтровать по  
+        <h6>
+            Фильтровать по заданным <br> параметрам:
+        </h6>
         <select v-model="SelectedColumn" name="Filter3" label="Filter" tittle="filter" class="select">
-        <option disabled >сортировка по</option>
+        <option disabled >сортировка по:</option>
         <option >Названию</option>
         <option >Колличеству</option>
         <option>Расстоянию</option>
     </select>
-    {{Selected}}
     <select v-model="SelectedCondition" class="select" >
-        <option disabled >Условие:</option>
+        <option disabled >По условию:</option>
         <option>Содержит</option>
         <option>Равно</option>
         <option>Больше</option>
         <option>Меньше</option>
     </select>
-    {{SelectedCondition}}
     <textarea class="textarea" placeholder="введите текст" name="" id="" cols="30" rows="10"
     v-model="TextAreaValue" 
     @input="FilterFunc"
     ></textarea>
-    <!-- <button @click="FilterFunc"> button   </button> -->
-    <!-- <input v-model="TextAreaValue" type="text"> -->
-    <p>{{TextAreaValue}}</p>
-</div>
+
+    </div>
     
     <!-- таблица -->
     <table class="OurTable">
@@ -37,7 +35,7 @@
             <th @click="SortByPrice">Расстояние <i class="material-icons">unfold_more</i> </th>    
         </tr>
         <!-- таблица строки -->
-        <TableRow :row_data="row" v-for="row, index in FilterFunc" :key="index"  />
+        <TableRow :row_data="row" v-for="row, in LoadMorePages" :key=row  />
         <!-- в случае ошибки -->
         <div v-if="Errored" class="alert alert-danger OurTable" role="alert">Ошибка в запросе к серверу API</div>
     </table>
@@ -51,6 +49,9 @@
     </div>
 
     </container>
+    <div>
+        {{SortDirection}}
+    </div>
 
 </template>
 
@@ -69,6 +70,7 @@ export default {
       TextAreaValue: "",
       SelectedColumn: "",
       SelectedCondition: "",
+      SortDirection: "true"
     }
   },
   components: {
@@ -85,45 +87,55 @@ export default {
   methods: {
     PageClick(PageNum){
         this.CurrentPage = PageNum;
+    }, 
+    SortByTittle() {if (this.SortDirection) {this.users_data.sort((a,b) => a.title.localeCompare(b.title))}
+                    else {this.users_data.sort((a,b) => b.title.localeCompare(a.title))}
+                    this.SortDirection =!this.SortDirection;
     },
-    
-    SortByTittle() { this.users_data.sort((a,b) => a.title.localeCompare(b.title))},
-    SortByStock() { this.users_data.sort((a,b) => b.stock-a.stock)},
-    SortByPrice() { this.users_data.sort((a,b) => b.price-a.price)},
+    SortByStock() { if (this.SortDirection) {this.users_data.sort((a,b) => b.stock-a.stock)}
+                    else { this.users_data.sort((a,b) => a.stock-b.stock) }
+                    this.SortDirection =!this.SortDirection;
+    },
+    SortByPrice() { if (this.SortDirection) {this.users_data.sort((a,b) => b.price-a.price)}
+                    else {this.users_data.sort((a,b) => a.price-b.price)}
+                    this.SortDirection =!this.SortDirection;
+                },
+                    
+    },
 
-    },
-  
 
     computed: {
+    FromApi(){ return [...this.users_data]},
     Pages(){
       return Math.ceil(this.users_data.length/this.ItemsInPage)
     },
     LoadMorePages(){
       let from = (this.CurrentPage - 1)*this.ItemsInPage
       let to = from + this.ItemsInPage;
-      console.log(this.users_data.slice(from, to));
-      return this.users_data.slice(from, to)  
+    //   console.log(this.FromApi.slice(from, to));
+      return this.FilterFunc.slice(from, to)  
     },
     FilterFunc(){  
         switch (this.SelectedColumn) {
-        case "Названию": return this.LoadMorePages.filter(item => item.title.includes(this.TextAreaValue))
+        case "Названию": return this.FromApi.filter(item => item.title.includes(this.TextAreaValue))
         case "Колличеству": if(this.SelectedCondition === "Больше") {
-            return this.LoadMorePages.filter(item => item.stock > Number(this.TextAreaValue))
+            return this.FromApi.filter(item => item.stock > Number(this.TextAreaValue))
             } else if(this.SelectedCondition === "Меньше"){
-           return this.LoadMorePages.filter(item =>  item.stock < Number(this.TextAreaValue))
+           return this.FromApi.filter(item =>  item.stock < Number(this.TextAreaValue))
             } else
-            return this.LoadMorePages.filter(item =>  item.stock.toString().includes(this.TextAreaValue))
+            return this.FromApi.filter(item =>  item.stock.toString().includes(this.TextAreaValue))
     // else if ( this.SelectedColumn==="Расстоянию")
         case "Расстоянию":
             if(this.SelectedCondition === "Больше") {
-            return this.LoadMorePages.filter(item => item.price > Number(this.TextAreaValue))
+            return this.FromApi.filter(item => item.price > Number(this.TextAreaValue))
             } else if(this.SelectedCondition === "Меньше"){
-            return this.LoadMorePages.filter(item =>  item.price < Number(this.TextAreaValue))
+            return this.FromApi.filter(item =>  item.price < Number(this.TextAreaValue))
             } else
-             return this.LoadMorePages.filter(item => item.price.toString().includes(this.TextAreaValue))
-        default: return this.LoadMorePages
+             return this.FromApi.filter(item => item.price.toString().includes(this.TextAreaValue))
+        default: return this.FromApi;
         }
-}
+},
+
 }}
 </script>
 <style>
@@ -136,6 +148,10 @@ export default {
   background-color: rgb(189, 199, 190);
   border: 1px solid grey;
   border-collapse: collapse;
+}
+h6{
+    font-size: medium;
+    margin: 20px 20px 20px;
 }
 .selectMain {
     padding: 20px;
